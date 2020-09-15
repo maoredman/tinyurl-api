@@ -14,14 +14,20 @@ app.use(router.routes());
 
 async function postUrl(ctx) {
     const url = 'https://tinyurl.com/api-create.php?url=' + ctx.request.body.url;
+    let status;
     const tinyUrl = await axios.get(url)
         .then(function (response) {
+        	status = response.status;
             return response.data;            
         })
         .catch(function (error) {
-            console.log(error);
+        	status = error.response.status;
+            // console.log(error);
         })
-    ctx.body = tinyUrl;
+    ctx.status = status;
+    if (status === 200) {
+    	ctx.body = tinyUrl;
+    }
 }
 
 app.listen(PORT);
